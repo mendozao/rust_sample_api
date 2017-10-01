@@ -17,16 +17,10 @@ pub mod schema;
 
 
 fn main() {
-    let post_items = models::Post::get_posts();
-
-    let post_handler = handlers::PostHandler {
-        posts: post_items
-    };
-
     let mut router = Router::new();
 
-    router.get("/", post_handler, "index");
-    router.get("/:query", handlers::query_handler, "query");
+    router.get("/posts", handlers::posts_handler, "posts_list");
+    router.get("/posts/:id", handlers::post_handler, "posts_detail");
 
     Iron::new(router).http("localhost:3000").unwrap();
 }

@@ -1,4 +1,3 @@
-use iron::Handler;
 use iron::status;
 use iron::IronResult;
 use iron::Response;
@@ -10,18 +9,17 @@ use router::Router;
 
 use rustc_serialize;
 
-pub struct PostHandler {
-    pub posts: Vec<models::Post>
+
+pub fn posts_handler(_: &mut Request) -> IronResult<Response> {
+    let post_items = models::Post::get_posts();
+    let encoded = rustc_serialize::json::encode(&post_items).unwrap();
+    Ok(Response::with((status::Ok, encoded)))
 }
 
-impl Handler for PostHandler {
-    fn handle(&self, _: &mut Request) -> IronResult<Response> {
-        let encoded = rustc_serialize::json::encode(&self.posts).unwrap();
-        Ok(Response::with((status::Ok, encoded)))
-    }
-}
-
-pub fn query_handler(req: &mut Request) -> IronResult<Response> {
-    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
-    Ok(Response::with((status::Ok, *query)))
+pub fn post_handler(req: &mut Request) -> IronResult<Response> {
+    let ref post_id_query = req.extensions.get::<Router>().unwrap().find("id").unwrap_or("/");
+    let post_id = post_id_query.parse::<i32>().unwrap();
+    let post_item = models::Post::get_post(post_id);
+    let encoded = rustc_serialize::json::encode(&post_item).unwrap();
+    Ok(Response::with((status::Ok, encoded)))
 }

@@ -2,6 +2,7 @@ use database;
 
 use diesel::prelude::*;
 
+
 #[derive(RustcDecodable, RustcEncodable)]
 #[derive(Queryable)]
 pub struct Post {
@@ -11,11 +12,19 @@ pub struct Post {
     pub published: bool,
 }
 
-
 impl Post {
-    pub fn get_posts() -> Vec<Post> {
-        use schema::posts::dsl::*;
+    pub fn get_post(post_id: i32) -> Post {
+        use schema::posts::dsl::{posts};
+        
+        let connection = database::establish_connection();
 
+        let result = posts.find(post_id).first::<Post>(&connection).expect("Error loading post");
+        result
+    }
+
+    pub fn get_posts() -> Vec<Post> {
+        use schema::posts::dsl::{posts, published};
+        
         let connection = database::establish_connection();
 
         let results = posts.filter(published.eq(true))
