@@ -3,9 +3,10 @@ use database;
 use diesel::prelude::*;
 
 
-#[derive(RustcDecodable, RustcEncodable)]
 #[derive(Queryable)]
+#[derive(Serialize, Deserialize)]
 pub struct Post {
+    #[serde(skip_serializing)]
     pub id: i32,
     pub title: String,
     pub body: String,
