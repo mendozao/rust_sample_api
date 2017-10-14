@@ -1,5 +1,5 @@
 [package]
-name = "testapi"
+name = "rust_sample_api"
 version = "0.0.0"
 
 [dependencies]
